@@ -1,4 +1,4 @@
-# Node.js Backend Essentials - Complete Guide
+# Index.js
 
 ## 1️⃣ What does `import path from "path";` mean?
 
@@ -7,6 +7,7 @@ It means you are importing Node.js's built-in `path` module so you can work with
 ### What is `path`?
 
 `path` is a core Node.js module (no installation needed) that helps you:
+
 - Join paths correctly
 - Resolve absolute paths
 - Handle OS differences (Windows vs Linux/Mac)
@@ -15,6 +16,7 @@ It means you are importing Node.js's built-in `path` module so you can work with
 ### Why do we need `path`?
 
 File paths are OS-dependent:
+
 - **Windows** → `C:\users\file.txt`
 - **Linux / macOS** → `/home/users/file.txt`
 
@@ -31,6 +33,7 @@ If you hardcode paths, your app may break on another OS.
 ### Why cookies need parsing
 
 When a browser sends cookies, they arrive as a raw string in the HTTP header:
+
 ```http
 Cookie: token=abc123; theme=dark; loggedIn=true
 ```
@@ -42,6 +45,7 @@ This format is not convenient to use directly.
 ### What `cookie-parser` does
 
 After using it, you get:
+
 ```javascript
 req.cookies = {
   token: "abc123",
@@ -51,6 +55,7 @@ req.cookies = {
 ```
 
 So you can easily write:
+
 ```javascript
 req.cookies.token
 ```
@@ -80,6 +85,7 @@ It only opens the door.
 ### The problem it solves
 
 You should **never hardcode secrets** like:
+
 - Database passwords
 - API keys
 - JWT secrets
@@ -87,6 +93,7 @@ You should **never hardcode secrets** like:
 Instead, you keep them in a `.env` file.
 
 ### Example `.env`
+
 ```env
 PORT=5000
 DB_URL=mongodb+srv://...
@@ -94,16 +101,19 @@ JWT_SECRET=xyz123
 ```
 
 ### What `dotenv.config()` does
+
 ```javascript
 import dotenv from "dotenv";
 dotenv.config();
 ```
 
 It:
+
 1. Reads the `.env` file
 2. Loads variables into `process.env`
 
 So you can use:
+
 ```javascript
 process.env.PORT
 process.env.DB_URL
@@ -124,7 +134,8 @@ Without this, the server **cannot read data sent by the client** which is in JSO
 
 All info comes in `req.body`.
 
-### Example:
+### Example
+
 ```javascript
 app.use(express.json());
 
@@ -134,3 +145,102 @@ app.post('/api/user', (req, res) => {
 ```
 
 👉 **This middleware parses JSON from the request body and makes it accessible via `req.body`**
+
+---
+
+## 6️⃣ Why do we use `app.use("/api/auth", authRoutes);`?
+
+It tells Express.js:
+
+**"For every request that starts with `/api/auth`, forward it to `authRoutes`."**
+
+### How it works
+
+| Route file  | Actual API URL       |
+| ----------- | -------------------- |
+| `/login`    | `/api/auth/login`    |
+| `/register` | `/api/auth/register` |
+
+### Key benefit
+
+You don't repeat `/api/auth` inside every route.
+
+**Example:**
+
+```javascript
+// authRoutes.js
+router.post('/login', ...);      // Becomes /api/auth/login
+router.post('/register', ...);   // Becomes /api/auth/register
+
+// app.js
+app.use("/api/auth", authRoutes);
+```
+
+---
+
+## 7️⃣ Why `const __dirname = path.resolve();` is used
+
+### Short answer
+
+👉 In **ES Modules**, `__dirname` does not exist by default, so `path.resolve()` is used to recreate the project's root directory path.
+
+### What `path.resolve()` does
+
+```javascript
+path.resolve()
+```
+
+- Returns the **absolute path** of the current working directory
+- Usually the **root of your project**
+- Based on where `node` was started
+
+**Example output:**
+
+```
+/Users/priyansh/projects/myapp
+```
+
+### Why people write this line
+
+```javascript
+const __dirname = path.resolve();
+```
+
+They are:
+
+- Creating a variable named `__dirname`
+- Assigning it the project root path
+- So existing Express code keeps working
+
+### When is this needed?
+
+**CommonJS (old way):**
+
+```javascript
+// __dirname is available automatically
+console.log(__dirname);
+```
+
+**ES Modules (new way):**
+
+```javascript
+// __dirname does NOT exist
+// So we recreate it:
+import path from "path";
+const __dirname = path.resolve();
+```
+
+### Common use case
+
+```javascript
+import path from "path";
+const __dirname = path.resolve();
+
+// Serve static files
+app.use(express.static(path.join(__dirname, "public")));
+
+// Load environment variables
+dotenv.config({ path: path.join(__dirname, ".env") });
+```
+
+👉 **This ensures your paths work correctly regardless of where you run `node` from.**
