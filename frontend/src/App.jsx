@@ -21,6 +21,7 @@ const App = () => {
 
   console.log({ onlineUsers });
 
+  //REVIEW - 
   useEffect(() => {
     checkAuth();
   }, [checkAuth]);
