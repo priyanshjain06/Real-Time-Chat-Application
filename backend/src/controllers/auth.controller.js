@@ -2,7 +2,7 @@ import { generateToken } from "../lib/utils.js";
 import User from "../models/user.model.js";
 import bcrypt from "bcryptjs";
 import cloudinary from "../lib/cloudinary.js";
-import multer from "multer";    
+import multer from "multer";
 import sharp from "sharp";
 
 export const signup = async (req, res) => {
@@ -95,8 +95,7 @@ const upload = multer({ storage });
 
 
 export const uploadProfilePic = upload.single("profilePic");
-
-
+//REVIEW -  .single (for first time user is uploading pic)
 
 export const updateProfile = async (req, res) => {
   try {
@@ -113,6 +112,7 @@ export const updateProfile = async (req, res) => {
       async (error, result) => {
         if (error) return res.status(500).json({ message: "Upload failed" });
 
+        //REVIEW -  find by id and update ! 
         const updatedUser = await User.findByIdAndUpdate(
           req.user._id,
           { profilePic: result.secure_url },
@@ -132,7 +132,7 @@ export const updateProfile = async (req, res) => {
 
 export const checkAuth = (req, res) => {
   try {
-    res.status(200).json(req.user);
+    res.status(200).json(req.user); //REVIEW -  
   } catch (error) {
     console.log("Error in checkAuth controller", error.message);
     res.status(500).json({ message: "Internal Server Error" });

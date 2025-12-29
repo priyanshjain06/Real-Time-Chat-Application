@@ -14,12 +14,14 @@ export const searchGiphy = async (req, res) => {
     const response = await axios.get(url);
     const data = response.data;
 
+    //convert giphy api data into custome data format for db
     const stickers = data.data.map((item) => ({
       giphyId: item.id,
       title: item.title,
       url: item.images.fixed_height.url,
     }));
 
+    //now save new and existing stickers in db
     const savedStickers = [];
     for (const sticker of stickers) {
       let stickerDoc = await Sticker.findOne({ giphyId: sticker.giphyId });
@@ -30,9 +32,10 @@ export const searchGiphy = async (req, res) => {
       savedStickers.push(stickerDoc);
     }
 
+    // send stickers for display in frontent 
     const responseData = savedStickers.map((sticker) => ({
-      _id: sticker._id,
-      id: sticker.giphyId,
+      _id: sticker._id, //REVIEW -  this is mongo db id  ! 
+      id: sticker.giphyId, // this is sticker id ! 
       title: sticker.title,
       url: sticker.url,
     }));
@@ -49,4 +52,4 @@ export const searchGiphy = async (req, res) => {
       error: error.response ? error.response.data : error.message,
     });
   }
-};
+};  
