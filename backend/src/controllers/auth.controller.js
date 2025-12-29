@@ -2,11 +2,11 @@ import { generateToken } from "../lib/utils.js";
 import User from "../models/user.model.js";
 import bcrypt from "bcryptjs";
 import cloudinary from "../lib/cloudinary.js";
-import multer from "multer";
+import multer from "multer";    
 import sharp from "sharp";
 
 export const signup = async (req, res) => {
-  const { fullName, email, password } = req.body;
+  const { fullName, email, password } = req.body; //REVIEW -model
   try {
     if (!fullName || !email || !password) {
       return res.status(400).json({ message: "All fields are required" });
@@ -89,10 +89,14 @@ export const logout = (req, res) => {
   }
 };
 
-const storage = multer.memoryStorage();
+const storage = multer.memoryStorage(); //REVIEW -  
 const upload = multer({ storage });
 
+
+
 export const uploadProfilePic = upload.single("profilePic");
+
+
 
 export const updateProfile = async (req, res) => {
   try {
@@ -118,6 +122,7 @@ export const updateProfile = async (req, res) => {
         res.status(200).json(updatedUser);
       }
     );
+
 
     uploadStream.end(optimizedImage);
   } catch (error) {
