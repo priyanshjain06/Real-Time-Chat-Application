@@ -11,7 +11,7 @@ const io = new Server(server, {
   },
 });
 
-// REVIEW Enable message sending to a partcular person we need its room id called socket id here 
+// REVIEW Enable message sending to a particular person we need its room id called socket id here 
 export function getReceiverSocketId(userId) {
   return userSocketMap[userId];
 }

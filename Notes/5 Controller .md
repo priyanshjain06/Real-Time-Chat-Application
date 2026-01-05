@@ -288,6 +288,10 @@ Return updated user
 | Faster | ❌ | ✔ |
 | Validation | ✔ | Optional |
 
+```
+save needs all fields & runs schema validations and returns the documenet  but FindByIdAndUpdate doesnt need all only updating fields are needed ! nor return nor schema validation 
+```
+
 ---
 
 ## 1️⃣1️⃣ Complete backend upload logic (mental model)
@@ -568,6 +572,12 @@ Backend sends response to frontend
 const filteredUsers = await User.find({
   _id: { $ne: loggedInUserId },
 }).select("-password");
+```
+ What select("-password") does
+```
+The - sign means exclude
+This tells Mongoose:
+“Return all fields except password”
 ```
 
 ---
