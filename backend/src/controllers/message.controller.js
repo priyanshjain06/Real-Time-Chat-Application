@@ -44,9 +44,14 @@ export const getMessages = async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 };
-
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
+
+//FIXME - 
+// const upload = multer({
+//   storage: multer.memoryStorage(),
+//   limits: { fileSize: 10 * 1024 * 1024 },
+// });
 
 export const uploadChatImage = upload.single("image");
 
